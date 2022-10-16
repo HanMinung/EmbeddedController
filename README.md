@@ -153,3 +153,119 @@ void RCC_GPIOA_enable()
 * Structure of RCC-->AHB1 enable register 
 
 <img src="https://user-images.githubusercontent.com/99113269/196023402-3e0c8d58-44e4-4fd8-a16f-672243692333.png" alt="화면 캡처 2022-10-16 161830" style="zoom: 50%;" />
+
+
+
+## ecEXTI.h
+
+```c
+#ifndef __EC_EXTI_H
+#define __EC_EXTI_H
+
+#include "stm32f411xe.h"
+
+// trgger type : falling / rising / both
+#define FALL 0
+#define RISE 1
+#define BOTH 2
+
+#ifdef __cplusplus
+ extern "C" {
+#endif /* __cplusplus */
+
+void EXTI_init(GPIO_TypeDef *Port, int pin, int trig, int priority);
+void EXTI_enable(uint32_t pin);
+void EXTI_disable(uint32_t pin);
+uint32_t is_pending_EXTI(uint32_t pin);
+void clear_pending_EXTI(uint32_t pin);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif
+```
+
+#### void EXTI_init(GPIO_TypeDef *Port, int pin, int trig, int priority)
+
+* Enable peripheral clock
+* Connect external lien to the GPIO
+  * e.g. Button pin : GPIOC  
+  * EXTICR_port = 2;  ( A : 0 , B : 1 , C : 2 , D : 3 )
+* Clear 4 bits and set
+* Configure Trigger edge , Interrupt mask , NVIC setting
+* Set priority , Enable IRQ
+* Parameter : Port , Pin , Trigger type , Priority
+* Code structure :
+
+```c
+void EXTI_init(GPIO_TypeDef *Port, int Pin, int trig_type,int priority){
+
+	// SYSCFG peripheral clock enable	
+	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;		
+	
+	// Connect External Line to the GPIO
+	int EXTICR_port;
+	if		(Port == GPIOA) EXTICR_port = 0;
+	else if	(Port == GPIOB) EXTICR_port = 1;
+	else if	(Port == GPIOC) EXTICR_port = 2;
+	else if	(Port == GPIOD) EXTICR_port = 3;
+	else 					EXTICR_port = 4;
+	
+	SYSCFG->EXTICR[Pin/4] &= ~15<<(4*(Pin%4));	 				// clear 4 bits
+	SYSCFG->EXTICR[Pin/4] |= EXTICR_port<<(4*(Pin%4));			// set 4 bits
+	
+	// Configure Trigger edge
+	if (trig_type == FALL) EXTI->FTSR |= 1<<Pin;   		// Falling trigger enable 
+	else if	(trig_type == RISE) EXTI->RTSR |= 1<<Pin;   // Rising trigger enable 
+	else if	(trig_type == BOTH) {						// Both falling/rising trigger enable
+		EXTI->RTSR |= 1<<Pin; 
+		EXTI->FTSR |= 1<<Pin;
+	} 
+	
+	// Configure Interrupt Mask (Interrupt enabled)
+	EXTI->IMR  |= 1<<Pin;    	 // not masked
+	
+	
+	// NVIC(IRQ) Setting
+	int EXTI_IRQn = 0;			// initialization
+
+	if(Pin < 5) 		EXTI_IRQn = (Pin + 6);
+	else if(Pin < 10) 	EXTI_IRQn = EXTI9_5_IRQn;
+	else 				EXTI_IRQn = EXTI15_10_IRQn;
+	
+								
+	NVIC_SetPriority(EXTI_IRQn, priority);	// EXTI priority
+	NVIC_EnableIRQ(EXTI_IRQn); 				// EXTI IRQ enable
+}
+```
+
+```c
+void EXTI_enable(uint32_t pin) {
+	EXTI->IMR |= 1<<pin;    			 // not masked (i.e., Interrupt enabled)
+}
+
+void EXTI_disable(uint32_t pin) {
+	EXTI->IMR &= ~1<<pin;       		 // masked (i.e., Interrupt disabled)
+}
+
+uint32_t is_pending_EXTI(uint32_t pin){
+	uint32_t EXTI_PRx = 1 << pin;     	// check  EXTI pending 	
+	return ((EXTI->PR & EXTI_PRx) == EXTI_PRx);	
+}
+
+void clear_pending_EXTI(uint32_t pin){
+	EXTI->PR |= 1<<pin;     // clear EXTI pending : essential point
+	// This bit is cleared by programming it to '1'
+}
+```
+
+* Structure of EXTI-->IMR : Interrupt mask regisgter
+
+  <img src="https://user-images.githubusercontent.com/99113269/196026004-65cc208d-8cda-499e-afc6-c820d63507da.png" alt="image" style="zoom:67%;" />
+
+  
+
+* Structure of EXTI-->PR : Pending register
+
+<img src="https://user-images.githubusercontent.com/99113269/196025934-b89eb2eb-91df-4ca4-9045-471c8b5884f4.png" alt="image" style="zoom: 67%;" />
