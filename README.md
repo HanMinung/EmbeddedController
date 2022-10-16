@@ -150,9 +150,44 @@ void RCC_GPIOA_enable()
 }
 ```
 
-* Structure of RCC-->AHB1 enable register 
+* e.g. Option 1 : Internal Clock (HSI) based GPIO
 
-<img src="https://user-images.githubusercontent.com/99113269/196023402-3e0c8d58-44e4-4fd8-a16f-672243692333.png" alt="화면 캡처 2022-10-16 161830" style="zoom: 50%;" />
+​	 Step 1. Enable HSI and choose as SYSCLK source
+
+1. Enable HSI : **RCC --> CR |= 1 << 0 ;**
+2. Wait until HSI is stable and ready : **while (RCC --> CFGR & (1≪2) == 0 )**
+
+​		value : 1 means clock is stable and ready
+
+3.  Choose the system clock switch : (clear) **RCC --> CFGR &= 3 << 0 ;**
+
+​																	 (set value) **RCC --> CFGR |= 00 << 0 ;**         
+
+4. Check if the selected source is correct : (clear) **RCC --> CFGR &= 3 << 2 ;**
+
+​																		   	(set value) **RCC --> CFGR |= 00 << 2 ;**         
+
+* <u>*Structure of RCC --> CR (Clock Register) register*</u>
+
+<img src="https://user-images.githubusercontent.com/99113269/196062978-c6236dd1-2151-4062-bce7-16458cc2dd46.png" alt="image" style="zoom:67%;" />
+
+<img src="https://user-images.githubusercontent.com/99113269/196063016-f557e7e3-ab7c-4020-bf84-9ba8b33c0dc2.png" alt="image" style="zoom: 67%;" />
+
+
+
+* *<u>Structure of RCC --> CFGR (Clock Configuration Register) register</u>*
+
+<img src="https://user-images.githubusercontent.com/99113269/196063034-8542f1fe-0b6e-4872-a68d-3999512a5b99.png" alt="image" style="zoom: 80%;" />
+
+<img src="https://user-images.githubusercontent.com/99113269/196063041-edbfffbd-bb38-460a-aee6-c5c79c002c06.png" alt="image" style="zoom:67%;" />
+
+
+
+* *<u>Structure of RCC --> AHB1 enable register</u>* 
+
+<img src="C:\Users\hanmu\AppData\Roaming\Typora\typora-user-images\image-20221017080025570.png" alt="image-20221017080025570"  />
+
+
 
 
 
@@ -262,10 +297,10 @@ void clear_pending_EXTI(uint32_t pin){
 
 * Structure of EXTI-->IMR : Interrupt mask regisgter
 
-  <img src="https://user-images.githubusercontent.com/99113269/196026004-65cc208d-8cda-499e-afc6-c820d63507da.png" alt="image" style="zoom:67%;" />
+  <img src="https://user-images.githubusercontent.com/99113269/196026004-65cc208d-8cda-499e-afc6-c820d63507da.png" alt="image" style="zoom: 67%;" />
 
   
 
-* Structure of EXTI-->PR : Pending register
+* *<u>Structure of EXTI-->PR : Pending register</u>*
 
 <img src="https://user-images.githubusercontent.com/99113269/196025934-b89eb2eb-91df-4ca4-9045-471c8b5884f4.png" alt="image" style="zoom: 67%;" />
