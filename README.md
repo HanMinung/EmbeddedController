@@ -150,9 +150,9 @@ void RCC_GPIOA_enable()
 }
 ```
 
-* e.g. Option 1 : Internal Clock (HSI) based GPIO
+#### **e.g. Option 1 : Internal Clock (HSI) based GPIO**
 
-​	 Step 1. Enable HSI and choose as SYSCLK source
+Step 1. Enable HSI and choose as SYSCLK source
 
 1. Enable HSI : **RCC --> CR |= 1 << 0 ;**
 2. Wait until HSI is stable and ready : **while (RCC --> CFGR & (1≪2) == 0 )**
@@ -186,6 +186,30 @@ void RCC_GPIOA_enable()
 * *<u>Structure of RCC --> AHB1 enable register</u>* 
 
 <img src="C:\Users\hanmu\AppData\Roaming\Typora\typora-user-images\image-20221017080025570.png" alt="image-20221017080025570" style="zoom: 50%;" />
+
+
+
+#### e.g. Option 2 : PLL based GPIO clock
+
+1. Enable either (HSI or HSE) for PLL and choose PLL for system clock
+
+1. select the clock source for PLL
+2. Enable PLL
+3. Enable GPIOx clock ( AHB1ENR )
+
+
+
+* select the clock source for PLL : RCC --> PLLCFGR |= value << 22;
+
+       * value 0 : HSI clock selected as PLL source
+
+  * value 1 : HSE oscillator clock selected as PLL source
+
+* Structure of RCC --> PLLCFGR ( PLL Clock Configuration Register ) register
+
+<img src="https://user-images.githubusercontent.com/99113269/196064042-d01df4f7-bf3a-4a39-a5ae-b4c451f4f520.png" alt="image" style="zoom:50%;" />
+
+<img src="https://user-images.githubusercontent.com/99113269/196064092-d91719f0-56a4-4406-b8bd-da1da10342d6.png" alt="image" style="zoom: 67%;" />
 
 
 
