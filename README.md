@@ -169,23 +169,23 @@ void RCC_GPIOA_enable()
 
 * <u>*Structure of RCC --> CR (Clock Register) register*</u>
 
-<img src="https://user-images.githubusercontent.com/99113269/196062978-c6236dd1-2151-4062-bce7-16458cc2dd46.png" alt="image" style="zoom:67%;" />
+<img src="https://user-images.githubusercontent.com/99113269/196062978-c6236dd1-2151-4062-bce7-16458cc2dd46.png" alt="image" style="zoom: 33%;" />
 
-<img src="https://user-images.githubusercontent.com/99113269/196063016-f557e7e3-ab7c-4020-bf84-9ba8b33c0dc2.png" alt="image" style="zoom: 67%;" />
+<img src="https://user-images.githubusercontent.com/99113269/196063016-f557e7e3-ab7c-4020-bf84-9ba8b33c0dc2.png" alt="image" style="zoom: 50%;" />
 
 
 
 * *<u>Structure of RCC --> CFGR (Clock Configuration Register) register</u>*
 
-<img src="https://user-images.githubusercontent.com/99113269/196063034-8542f1fe-0b6e-4872-a68d-3999512a5b99.png" alt="image" style="zoom: 80%;" />
+<img src="https://user-images.githubusercontent.com/99113269/196063034-8542f1fe-0b6e-4872-a68d-3999512a5b99.png" alt="image" style="zoom: 50%;" />
 
-<img src="https://user-images.githubusercontent.com/99113269/196063041-edbfffbd-bb38-460a-aee6-c5c79c002c06.png" alt="image" style="zoom:67%;" />
+<img src="https://user-images.githubusercontent.com/99113269/196063041-edbfffbd-bb38-460a-aee6-c5c79c002c06.png" alt="image" style="zoom: 50%;" />
 
 
 
 * *<u>Structure of RCC --> AHB1 enable register</u>* 
 
-<img src="C:\Users\hanmu\AppData\Roaming\Typora\typora-user-images\image-20221017080025570.png" alt="image-20221017080025570"  />
+<img src="C:\Users\hanmu\AppData\Roaming\Typora\typora-user-images\image-20221017080025570.png" alt="image-20221017080025570" style="zoom: 50%;" />
 
 
 
@@ -297,10 +297,10 @@ void clear_pending_EXTI(uint32_t pin){
 
 * Structure of EXTI-->IMR : Interrupt mask regisgter
 
-  <img src="https://user-images.githubusercontent.com/99113269/196026004-65cc208d-8cda-499e-afc6-c820d63507da.png" alt="image" style="zoom: 67%;" />
+  <img src="https://user-images.githubusercontent.com/99113269/196026004-65cc208d-8cda-499e-afc6-c820d63507da.png" alt="image" style="zoom: 50%;" />
 
   
 
 * *<u>Structure of EXTI-->PR : Pending register</u>*
 
-<img src="https://user-images.githubusercontent.com/99113269/196025934-b89eb2eb-91df-4ca4-9045-471c8b5884f4.png" alt="image" style="zoom: 67%;" />
+<img src="https://user-images.githubusercontent.com/99113269/196025934-b89eb2eb-91df-4ca4-9045-471c8b5884f4.png" alt="image" style="zoom: 50%;" />
