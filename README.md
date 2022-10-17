@@ -185,7 +185,7 @@ Step 1. Enable HSI and choose as SYSCLK source
 
 * *<u>Structure of RCC --> AHB1 enable register</u>* 
 
-<img src="C:\Users\hanmu\AppData\Roaming\Typora\typora-user-images\image-20221017080025570.png" alt="image-20221017080025570" style="zoom: 50%;" />
+<img src="https://user-images.githubusercontent.com/99113269/196101672-2cc925ed-cecd-4a25-8110-2182ba0fd7b0.png" alt="image" style="zoom:50%;" />
 
 
 
