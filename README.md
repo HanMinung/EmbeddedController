@@ -1,5 +1,7 @@
 # Embedded Controller - STM32f411 HAL API
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Documentation for HAL functions
 
 Written by : Han Minung 
@@ -14,7 +16,11 @@ OS: WIn10
 
 MCU: STM32F411RE (Nucleo-64)
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+[TOC]
+
+----------------------------
 
 ## GPIO Digital I/O
 
@@ -97,7 +103,7 @@ void LED_toggle(uint8_t cnt);
 #endif
 ```
 
-
+--------------
 
 ## ecRCC.h
 
@@ -130,7 +136,7 @@ extern int EC_SYSCL;
 #endif
 ```
 
-##### void RCC_GPIOA_enable(void)
+### void RCC_GPIOA_enable(void)
 
 - RCC peripheral clock enable register
 - internal structure 
@@ -199,13 +205,13 @@ Step 1. Enable HSI and choose as SYSCLK source
 
 
 
-* select the clock source for PLL : RCC --> PLLCFGR |= value << 22;
+* <u>*select the clock source for PLL : RCC --> PLLCFGR |= value << 22;*</u>
 
        * value 0 : HSI clock selected as PLL source
 
   * value 1 : HSE oscillator clock selected as PLL source
 
-* Structure of RCC --> PLLCFGR ( PLL Clock Configuration Register ) register
+* <u>*Structure of RCC --> PLLCFGR ( PLL Clock Configuration Register ) register*</u>
 
 <img src="https://user-images.githubusercontent.com/99113269/196064042-d01df4f7-bf3a-4a39-a5ae-b4c451f4f520.png" alt="image" style="zoom:50%;" />
 
@@ -213,7 +219,7 @@ Step 1. Enable HSI and choose as SYSCLK source
 
 
 
-
+----------------------------
 
 ## ecEXTI.h
 
@@ -319,7 +325,7 @@ void clear_pending_EXTI(uint32_t pin){
 }
 ```
 
-* Structure of EXTI-->IMR : Interrupt mask regisgter
+* <u>*Structure of EXTI-->IMR : Interrupt mask regisgter*</u>
 
   <img src="https://user-images.githubusercontent.com/99113269/196026004-65cc208d-8cda-499e-afc6-c820d63507da.png" alt="image" style="zoom: 50%;" />
 
@@ -328,3 +334,71 @@ void clear_pending_EXTI(uint32_t pin){
 * *<u>Structure of EXTI-->PR : Pending register</u>*
 
 <img src="https://user-images.githubusercontent.com/99113269/196025934-b89eb2eb-91df-4ca4-9045-471c8b5884f4.png" alt="image" style="zoom: 50%;" />
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Timer : basic
+
+1. Count increment or decrement in every CLK cycle
+2. Timer register : Prescaler register (**TIMx_PSC**) , Counter register (**TIMx_CNT**) , Auto-Reload register (**TIMx_ARR**)
+
+<img src="https://user-images.githubusercontent.com/99113269/196340340-5b128b33-95ef-496f-8afb-99716ef03d8d.png" alt="image" style="zoom:50%;" />
+
+3. Timer in STM32f4 : Tim6 ~ Tim8 are not used.
+
+<img src="https://user-images.githubusercontent.com/99113269/196340712-7dee56cd-bbe1-4dad-a097-89e1cec9cf5e.png" alt="image" style="zoom: 67%;" />
+
+* Advanced-control timers ( TIM1 & TIM8* )
+  * 16-bit auto-reload counter
+  * Up to 4 independant channels 
+  * Generate complementary PWM with programmable dead-time ( To prevent the short circuit )
+* General-purpose timer ( TIM2 ~ TIM5 )
+  * 32-bit ( TIM2 and TIM5 )
+  * 16-bit (TIM3 and TIM4 )
+  * Up to 4 independant channels , Up to 2 independant channels ( TIM9 ~ TIM11 )
+
+
+
+### Timer Interrupt (No output)
+
+* Timer interrupt type
+  * Update interrupt : CNT has overflow or underflow
+  * Compare c& Capture interrupt : CNT matches CCR
+
+* How can we tell which event has occured ?
+  * Check the flag in Status register (TIMx_SR)
+  * **UIF** (update interrupt flag) : overflow or underflow event
+  * **CCIF** (capture & compare flag) : CNT == CCR event
+
+
+
+### TIMx setting and TIMx Interrupt (no output mode)
+
+* System Clock setting
+* Timer setting
+  * Enable timer peripheral clock : **RCC-->APB1ENR** 
+  * Set counting direction (down or up) : **TIMx --> CR1 : DIR**
+  * Set timer clock pre-scaler value : **TIMx --> PSC : PSC[15:0]**
+  * Set auto-reload value : **TIMx --> ARR : ARR**
+  * Enable update or compare interrupt : **TIMx --> DIER : UIE**
+  * Enable counter : **TIMx --> CR1 : CEN**
+* <u>*structure of RCC_APB1ENR register*</u>
+
+<img src="https://user-images.githubusercontent.com/99113269/196428181-f19b145e-156f-4377-b936-f27880d0ab4c.png" alt="image" style="zoom: 50%;" />
+
+* <u>*stucture of TIMx_CR1 register*</u>
+
+<img src="https://user-images.githubusercontent.com/99113269/196428893-27012aca-7b62-4819-a755-d342d28a7937.png" alt="image" style="zoom:50%;" />
+
+<img src="https://user-images.githubusercontent.com/99113269/196428984-fb878f99-47e9-4ccf-8639-ec0db6db9fa2.png" alt="image" style="zoom:50%;" />
+
+* <u>*structure of TIMx_PSC & TIMx_ARR*</u>
+
+<img src="https://user-images.githubusercontent.com/99113269/196430153-69e76a94-faa5-41a0-bcfa-15ecece001d3.png" alt="image" style="zoom:50%;" />
+
+
+
+
+
+
+
