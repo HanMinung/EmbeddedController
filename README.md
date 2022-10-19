@@ -396,7 +396,60 @@ void clear_pending_EXTI(uint32_t pin){
 
 <img src="https://user-images.githubusercontent.com/99113269/196430153-69e76a94-faa5-41a0-bcfa-15ecece001d3.png" alt="image" style="zoom:50%;" />
 
+-----------------
 
+* example code of timer_interrupt ( Toggling 2 LEDs with timer interrupt )
+
+  ```c
+  #include "stm32f411xe.h"
+  #include "ecGPIO.h"
+  #include "ecRCC.h"
+  
+  uint32_t count = 0;
+  uint32_t count2 = 0;
+  
+  void setup(void);
+  	
+  int main(void) { 
+  	// Initialiization --------------------------------------------------------
+  	setup();
+  
+  	// Inifinite Loop ----------------------------------------------------------
+  	while(1){ }
+  }
+  
+  // Initialiization 
+  void setup(void)
+  {	
+  	RCC_PLL_init();                // System Clock = 84MHz
+  	//	GPIO LED pin configuration : user-defined function
+  	LED_init(GPIOB,LED_PB4,GPIOB,LED_PB5,GPIOB,LED_PB3,GPIOA,LED_PA10);
+  	TIM_INT_init(TIM2,1);
+  }
+  
+  void TIM2_IRQHandler(void){
+  	if((TIM2->SR & TIM_SR_UIF) == TIM_SR_UIF  ){ // update interrupt flag
+  	    count ++;
+  		count2 ++;
+  		
+  		if(count > 1000){
+  			bittoggle(GPIOB, LED_PB3);
+  			count = 0;
+  		}
+  		
+  		if(count2 > 2000){
+  			bittoggle(GPIOA, LED_PA10);
+  			count2 = 0;
+  		}
+  		
+  		// Check the flag in status register
+  		TIM2->SR &= ~TIM_SR_UIF;                  // clear by writing 0
+  	}
+  	
+  }
+  ```
+
+  
 
 
 
