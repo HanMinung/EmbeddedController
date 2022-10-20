@@ -335,6 +335,56 @@ void clear_pending_EXTI(uint32_t pin){
 
 <img src="https://user-images.githubusercontent.com/99113269/196025934-b89eb2eb-91df-4ca4-9045-471c8b5884f4.png" alt="image" style="zoom: 50%;" />
 
+
+
+* simple code of EXTI ( toggle multiple LEDs sequencially using external button interrupt )
+
+  * Basic structure : EXTI_init , Handler definition ( starts action when pending bit becomes 1 )
+  * When handler conducts all process, it is essential to clear pending bit.
+
+  ```c
+  #include "stm32f411xe.h"
+  #include "ecGPIO.h"
+  #include "ecRCC.h"
+  #include "ecEXTI.h"
+  
+  int cnt = 0;
+  
+  void EXTI15_10_IRQHandler(void);
+  void setup(void);
+  
+  int main(void) { 
+  	// Initialiization --------------------------------------------------------
+  	setup();
+  	// Inifinite Loop ----------------------------------------------------------
+  	while(1){ }
+  }
+  
+  // Initialiization 
+  void setup(void)
+  {
+  	RCC_HSI_init();
+  	LED_init(GPIOB, LED_PB4, GPIOB, LED_PB5, GPIOB, LED_PB3, GPIOA, LED_PA10);										
+  	
+  	EXTI_init(GPIOC,BUTTON_PIN,FALL,0);				// EXTI initialization , button pin, priority : 0
+  	GPIO_init(GPIOC, BUTTON_PIN, INPUT);			// BUTTON_PIN : INPUT
+  	GPIO_pupd(GPIOC, BUTTON_PIN, EC_PU);			// BUTTON_PIN : PULL_UP
+  
+  }
+  
+  void EXTI15_10_IRQHandler(void) { 
+  	if (is_pending_EXTI(BUTTON_PIN)) {
+  		cnt ++;
+  		LED_toggle(cnt);
+  		clear_pending_EXTI(BUTTON_PIN); // cleared by writing '1'
+  	}
+  }
+  
+  
+  ```
+
+
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## Timer : basic
