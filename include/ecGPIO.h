@@ -1,13 +1,10 @@
 /*----------------------------------------------------------------\
 @ Embedded Controller by Young-Keun Kim - Handong Global University
-Author           : SSS LAB
+Author           : HanMinung
 Created          : 05-03-2021
-Modified         : 09-28-2022
+Modified         : 10-29-2022
 Language/ver     : C++ in Keil uVision
-
-Description      : Distributed to Students for LAB_GPIO
 /----------------------------------------------------------------*/
-
 
 #include "stm32f411xe.h"
 #include "ecRCC.h"
@@ -44,23 +41,34 @@ Description      : Distributed to Students for LAB_GPIO
 #define LED_PIN 	5
 
 // 7 segement display
+#define LED_PA0   0
+#define LED_PA1 	1
+#define LED_PA2		2
 #define LED_PA5 	5
 #define LED_PA6 	6
 #define LED_PA7 	7
-#define LED_PB6 	6
-#define LED_PC7 	7
 #define LED_PA8 	8
 #define LED_PA9 	9
-#define LED_PB10 	10
-#define BUTTON_PIN 13
+#define LED_PA10 	10
 
-	
+#define LED_PB0 	0
+#define LED_PB3 	3
+#define LED_PB4 	4
+#define LED_PB5 	5
+#define LED_PB6 	6
+#define LED_PB9   9
+#define LED_PB10 	10
+
+#define LED_PC1 	1
+#define LED_PC7 	7
+
+#define BUTTON_PIN 13
 
 #ifdef __cplusplus
  extern "C" {
 #endif /* __cplusplus */
 
-
+	 
 extern unsigned int state[10][8];
 
 void GPIO_init(GPIO_TypeDef *Port, int pin, int mode);
@@ -79,9 +87,15 @@ void GPIO_pupd(GPIO_TypeDef* Port, int pin, int pupd);
 
 void bittoggle(GPIO_TypeDef *Port, int pin);
 
-void segment_init();
+void sevensegment_init();
 
 void sevensegment_decoder(uint8_t num);
+
+void indiv_init(GPIO_TypeDef *Port1,int pin,int TYPE,int OTYPE,int PUPD,int OSPEED);
+
+void LED_init(GPIO_TypeDef *Port1, int pin1, GPIO_TypeDef *Port2, int pin2, GPIO_TypeDef *Port3, int pin3, GPIO_TypeDef *Port4, int pin4);
+
+void LED_toggle(uint8_t cnt);
  
 #ifdef __cplusplus
 }

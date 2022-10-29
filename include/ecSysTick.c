@@ -1,5 +1,13 @@
-#include "ecSysTick.h"
+/*----------------------------------------------------------------\
+@ Embedded Controller by Young-Keun Kim - Handong Global University
+Author           : HanMinung
+Created          : 05-03-2021
+Modified         : 10-29-2022
+Language/ver     : C++ in Keil uVision
+/----------------------------------------------------------------*/
 
+
+#include "ecSysTick.h"
 
 #define MCU_CLK_PLL 84000000
 #define MCU_CLK_HSI 16000000

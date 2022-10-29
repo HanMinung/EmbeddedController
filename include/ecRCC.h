@@ -1,3 +1,12 @@
+/*----------------------------------------------------------------\
+@ Embedded Controller by Young-Keun Kim - Handong Global University
+Author           : HanMinung
+Created          : 05-03-2021
+Modified         : 10-29-2022
+Language/ver     : C++ in Keil uVision
+/----------------------------------------------------------------*/
+
+
 #ifndef __EC_RCC_H
 #define __EC_RCC_H
 

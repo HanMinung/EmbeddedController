@@ -1,11 +1,9 @@
 /*----------------------------------------------------------------\
 @ Embedded Controller by Young-Keun Kim - Handong Global University
-Author           : SSS LAB
+Author           : HanMinung
 Created          : 05-03-2021
-Modified         : 10-24-2022
+Modified         : 10-29-2022
 Language/ver     : C++ in Keil uVision
-
-Description      : Distributed to Students for LAB_GPIO
 /----------------------------------------------------------------*/
 
 /*

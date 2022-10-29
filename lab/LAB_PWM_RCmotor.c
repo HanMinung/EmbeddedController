@@ -1,11 +1,9 @@
 /*----------------------------------------------------------------\
 @ Embedded Controller by Young-Keun Kim - Handong Global University
-Author           : SSS LAB
+Author           : HanMinung
 Created          : 05-03-2021
-Modified         : 10-24-2022
+Modified         : 10-29-2022
 Language/ver     : C++ in Keil uVision
-
-Description      : Distributed to Students for LAB_GPIO
 /----------------------------------------------------------------*/
 
 #include "stm32f411xe.h"
@@ -71,7 +69,7 @@ void TIM3_IRQHandler(void){
 	if((TIM3->SR & TIM_SR_UIF) == TIM_SR_UIF){    // update interrupt flag
 
 		if(dir == 1) idx ++;
-		else if(dir == -1) idx -- ;
+		else if(dir == -1) idx --;
 		
 		dir = update_dir(dir,idx);
 	  duty = update_duty(idx);
@@ -82,7 +80,3 @@ void TIM3_IRQHandler(void){
 	TIM3->SR &= ~TIM_SR_UIF;                  		// clear by writing 0
 	
 }
-
-
-// 0.5 ~ 1.5 : 0deg ~ 90 deg
-// 0.5 - 0.66 - 0.77 에 따라 0deg, 10deg, 20deg ...

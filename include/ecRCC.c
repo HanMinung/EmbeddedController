@@ -1,3 +1,12 @@
+/*----------------------------------------------------------------\
+@ Embedded Controller by Young-Keun Kim - Handong Global University
+Author           : HanMinung
+Created          : 05-03-2021
+Modified         : 10-29-2022
+Language/ver     : C++ in Keil uVision
+/----------------------------------------------------------------*/
+
+
 #include "stm32f4xx.h"
 #include "ecRCC.h"
 
@@ -24,6 +33,7 @@ void RCC_HSI_init() {
 		EC_SYSCLK=16000000;
 }
 
+
 void RCC_PLL_init() {	
 	// To correctly read data from FLASH memory, the number of wait states (LATENCY)
   // must be correctly programmed according to the frequency of the CPU clock
@@ -33,22 +43,35 @@ void RCC_PLL_init() {
 		
 	// Enable the Internal High Speed oscillator (HSI)
 	RCC->CR |= RCC_CR_HSION;
+	//RCC->CR |= RCC_CR_HSEON;
 	while((RCC->CR & RCC_CR_HSIRDY) == 0);
+	//while((RCC->CR & RCC_CR_HSERDY) == 0);
 	
 	// Disable PLL for configuration
+	// 설정하기 전에는 PLL을 disable 시킬것 
 	RCC->CR    &= ~RCC_CR_PLLON;
 	
 	// Select clock source to PLL
 	RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLSRC; 		// Set source for PLL: clear bits
 	RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC_HSI; // Set source for PLL: 0 =HSI, 1 = HSE
+	//RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC_HSE; // Set source for PLL: 0 =HSI, 1 = HSE
 	
 	// Make PLL as 84 MHz
 	// f(VCO clock) = f(PLL clock input) * (PLLN / PLLM) = 16MHz * 84/8 = 168 MHz
 	// f(PLL_R) = f(VCO clock) / PLLP = 168MHz/2 = 84MHz
+	// 먼저 PLLM , PLLM , PLLP register 초기화 시켜주고, 바로 값 설정
+	
 	RCC->PLLCFGR = (RCC->PLLCFGR & ~RCC_PLLCFGR_PLLN) | 84U << 6;
 	RCC->PLLCFGR = (RCC->PLLCFGR & ~RCC_PLLCFGR_PLLM) | 8U ; 
-	RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLP;  // 00: PLLP = 2, 01: PLLP = 4, 10: PLLP = 6, 11: PLLP = 8	
+	// HSE PLL clock
+	//	RCC->PLLCFGR = (RCC->PLLCFGR & ~RCC_PLLCFGR_PLLM) | 4U ; 
+	RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLP;  // 00: PLLP = 2, 01: PLLP = 4, 10: PLLP = 6, 11: PLLP = 8
 	
+	// 설정 범위
+	// 2 ≤PLLQ ≤15
+	// 2 ≤ PLLM ≤ 63
+	// 50 ≤ PLLN ≤ 432
+	// f(final) = N/(MP)*f(input)
 	
 	// Enable PLL after configuration
 	RCC->CR   |= RCC_CR_PLLON; 
@@ -68,14 +91,15 @@ void RCC_PLL_init() {
 	RCC->CFGR |=  RCC_CFGR_PPRE1_2;
 	RCC->CFGR &= ~RCC_CFGR_PPRE2; 		// APB high-speed prescaler (APB2) = 1, HCLK not divided	(84MHz)
 	
-	EC_SYSCLK=84000000;
+	EC_SYSCLK = 84000000;
+	
 }
 
 
 void RCC_GPIOA_enable()
 {
 	// HSI is used as system clock         
-	RCC_HSI_init();
+	// RCC_HSI_init();
 	// RCC Peripheral Clock Enable Register 
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 }
@@ -83,7 +107,7 @@ void RCC_GPIOA_enable()
 void RCC_GPIOB_enable()
 {
 	// HSI is used as system clock         
-	RCC_HSI_init();
+	// RCC_HSI_init();
 	// RCC Peripheral Clock Enable Register 
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOBEN;
 }
@@ -91,7 +115,7 @@ void RCC_GPIOB_enable()
 void RCC_GPIOC_enable()
 {
 	// HSI is used as system clock         
-	RCC_HSI_init();
+	// RCC_HSI_init();
 	// RCC Peripheral Clock Enable Register 
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
 }
@@ -99,7 +123,7 @@ void RCC_GPIOC_enable()
 void RCC_GPIOD_enable()
 {
 	// HSI is used as system clock         
-	RCC_HSI_init();
+	// RCC_HSI_init();
 	// RCC Peripheral Clock Enable Register 
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
 }
@@ -107,7 +131,7 @@ void RCC_GPIOD_enable()
 void RCC_GPIOE_enable()
 {
 	// HSI is used as system clock         
-	RCC_HSI_init();
+	// RCC_HSI_init();
 	// RCC Peripheral Clock Enable Register 
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
 }
@@ -115,7 +139,7 @@ void RCC_GPIOE_enable()
 void RCC_GPIOH_enable()
 {
 	// HSI is used as system clock         
-	RCC_HSI_init();
+	// RCC_HSI_init();
 	// RCC Peripheral Clock Enable Register 
 	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
 }

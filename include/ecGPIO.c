@@ -1,18 +1,14 @@
 /*----------------------------------------------------------------\
 @ Embedded Controller by Young-Keun Kim - Handong Global University
-Author           : SSS LAB
+Author           : HanMinung
 Created          : 05-03-2021
-Modified         : 09-28-2022
+Modified         : 10-29-2022
 Language/ver     : C++ in Keil uVision
-
-Description      : Distributed to Students for LAB_GPIO
 /----------------------------------------------------------------*/
-
 
 #include "stm32f4xx.h"
 #include "stm32f411xe.h"
 #include "ecGPIO.h"
-
 
 void GPIO_init(GPIO_TypeDef *Port, int pin, int mode){     
 	// mode  : Input(0), Output(1), AlterFunc(2), Analog(3)   
@@ -41,6 +37,39 @@ void GPIO_init(GPIO_TypeDef *Port, int pin, int mode){
 	
 }
 
+void indiv_init(GPIO_TypeDef *Port,int pin,int TYPE,int OTYPE,int PUPD,int OSPEED){
+
+	GPIO_init(Port, pin, OUTPUT);    // calls RCC_GPIOA_enable()	
+	GPIO_otype(Port, pin, PUSH_PULL);
+	GPIO_pupd(Port, pin,NO_PULL_UP);
+	GPIO_ospeed(Port, pin, MEDIUM_SPEED);
+	
+}
+
+// PB4 , PB5 , PB3 , PA10 sequencially
+void LED_init(GPIO_TypeDef *Port1, int pin1, GPIO_TypeDef *Port2, int pin2, GPIO_TypeDef *Port3, int pin3, GPIO_TypeDef *Port4, int pin4){
+
+	GPIO_init(Port1, pin1, OUTPUT);    // calls RCC_GPIOA_enable()	
+	GPIO_otype(Port1, pin1, PUSH_PULL);
+	GPIO_pupd(Port1, pin1,NO_PULL_UP);
+	GPIO_ospeed(Port1, pin1, MEDIUM_SPEED);
+	
+	GPIO_init(Port2, pin2, OUTPUT);    // calls RCC_GPIOA_enable()	
+	GPIO_otype(Port2, pin2, PUSH_PULL);
+	GPIO_pupd(Port2, pin2,NO_PULL_UP);
+	GPIO_ospeed(Port2, pin2, MEDIUM_SPEED);
+
+	GPIO_init(Port3, pin3, OUTPUT);    // calls RCC_GPIOA_enable()	
+	GPIO_otype(Port3, pin3, PUSH_PULL);
+	GPIO_pupd(Port3, pin3,NO_PULL_UP);
+	GPIO_ospeed(Port3, pin3, MEDIUM_SPEED);
+	
+	GPIO_init(Port4, pin4, OUTPUT);    // calls RCC_GPIOA_enable()	
+	GPIO_otype(Port4, pin4, PUSH_PULL);
+	GPIO_pupd(Port4, pin4,NO_PULL_UP);
+	GPIO_ospeed(Port4, pin4, MEDIUM_SPEED);
+
+}
 
 // GPOI WRITE					: Ouput(LOW), Output(HIGH)
 void GPIO_write(GPIO_TypeDef *Port, int pin, int Output){
@@ -48,6 +77,7 @@ void GPIO_write(GPIO_TypeDef *Port, int pin, int Output){
 	Port->ODR |= Output<<pin;
 
 }
+
 
 // GPIO Mode          : Input(00), Output(01), AlterFunc(10), Analog(11)
 void GPIO_mode(GPIO_TypeDef *Port, int pin, int mode){
@@ -92,27 +122,57 @@ void bittoggle(GPIO_TypeDef *Port, int pin){
 		
 }
 
+unsigned int LED_state[16][4] = {
+	
+	{0,0,0,0},
+	{0,0,0,1},
+	{0,0,1,0},
+	{0,0,1,1},
+	{0,1,0,0},
+	{0,1,0,1},
+	{0,1,1,0},
+	{0,1,1,1},
+	{1,0,0,0},
+	{1,0,0,1},
+	{1,0,1,0},
+	{1,0,1,1},
+	{1,1,0,0},
+	{1,1,0,1},
+	{1,1,1,0},
+	{1,1,1,1},
+	
+};
 
+
+void LED_toggle(uint8_t cnt){
+
+		GPIO_write(GPIOA, LED_PA0, LED_state[cnt][0]);		// led a
+		GPIO_write(GPIOA, LED_PA1, LED_state[cnt][1]);		// led b
+		GPIO_write(GPIOB, LED_PB0, LED_state[cnt][2]);		// led c
+		GPIO_write(GPIOC, LED_PC1, LED_state[cnt][3]);		// led d
+		
+}
 
 //------------------------------ 7 SEGMENT -----------------------------------------
 
-void segment_init(void){
+void sevensegment_init(void){
 		
-	GPIO_init(GPIOA, LED_PA5, OUTPUT);    // calls RCC_GPIOA_enable()	
-	GPIO_otype(GPIOA, LED_PA5, PUSH_PULL);
-	GPIO_pupd(GPIOA, LED_PA5,NO_PULL_UP);
-	GPIO_ospeed(GPIOA, LED_PA5, MEDIUM_SPEED);
+	// 시험때 LED_PB9으로 바뀜
+	GPIO_init(GPIOB, LED_PB9, OUTPUT);    // calls RCC_GPIOA_enable()	
+	GPIO_otype(GPIOB, LED_PB9, PUSH_PULL);
+	GPIO_pupd(GPIOB, LED_PB9,NO_PULL_UP);
+	GPIO_ospeed(GPIOB, LED_PB9, MEDIUM_SPEED);
 	
 	GPIO_init(GPIOA, LED_PA6, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOA, LED_PA6, PUSH_PULL);
 	GPIO_pupd(GPIOA, LED_PA6,NO_PULL_UP);
 	GPIO_ospeed(GPIOA, LED_PA6, MEDIUM_SPEED);
 
-	
 	GPIO_init(GPIOA, LED_PA7, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOA, LED_PA7, PUSH_PULL);
 	GPIO_pupd(GPIOA, LED_PA7,NO_PULL_UP);
 	GPIO_ospeed(GPIOA, LED_PA7, MEDIUM_SPEED);
+	
 	
 	GPIO_init(GPIOB, LED_PB6, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOB, LED_PB6, PUSH_PULL);
@@ -146,14 +206,12 @@ void segment_init(void){
 	GPIO_write(GPIOC, LED_PC7, LOW);		// led e
 	GPIO_write(GPIOA, LED_PA9, LOW);		// led f
 	GPIO_write(GPIOA, LED_PA8, HIGH);		// led g
-	GPIO_write(GPIOB, LED_PB10, LOW);	// led dp
-
-
+	GPIO_write(GPIOB, LED_PB10, LOW);		// led dp
 }
 
 
-unsigned int state[10][8]={
-		// order : PA5 |PA6 |PA7 |PB6 |PC7 |PA9 |PA8	|PB10
+unsigned int sevensegment_state[11][8]={
+		// order : PB5 |PA6 |PA7 |PB6 |PC7 |PA9 |PA8	|PB10
 		//					a  | b  | c  | d  | e  | f  | g		| dp
     {0,0,0,0,0,0,1,0},          //zero
     {1,0,0,1,1,1,1,0},          //one
@@ -165,17 +223,18 @@ unsigned int state[10][8]={
     {0,0,0,1,1,1,1,0},          //seven
     {0,0,0,0,0,0,0,0},          //eight
     {0,0,0,1,1,0,0,0},          //nine
+		{0,0,1,1,0,0,0,0},					//pause mode
 										
 };
 
 
 void sevensegment_decoder(uint8_t num){
-		GPIO_write(GPIOA, LED_PA5, state[num][0]);		// led a
-		GPIO_write(GPIOA, LED_PA6, state[num][1]);		// led b
-		GPIO_write(GPIOA, LED_PA7, state[num][2]);		// led c
-		GPIO_write(GPIOB, LED_PB6, state[num][3]);		// led d		
-		GPIO_write(GPIOC, LED_PC7, state[num][4]);		// led e
-		GPIO_write(GPIOA, LED_PA9, state[num][5]);		// led f
-		GPIO_write(GPIOA, LED_PA8, state[num][6]);		// led g
-		GPIO_write(GPIOB, LED_PB10,state[num][7]);		// led dp
+	GPIO_write(GPIOB, LED_PB9, sevensegment_state[num][0]);		// led a
+	GPIO_write(GPIOA, LED_PA6, sevensegment_state[num][1]);		// led b
+	GPIO_write(GPIOA, LED_PA7, sevensegment_state[num][2]);		// led c
+	GPIO_write(GPIOB, LED_PB6, sevensegment_state[num][3]);		// led d		
+	GPIO_write(GPIOC, LED_PC7, sevensegment_state[num][4]);		// led e
+	GPIO_write(GPIOA, LED_PA9, sevensegment_state[num][5]);		// led f
+	GPIO_write(GPIOA, LED_PA8, sevensegment_state[num][6]);		// led g
+	GPIO_write(GPIOB, LED_PB10,sevensegment_state[num][7]);		// led dp
 }
