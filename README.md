@@ -156,7 +156,7 @@ void RCC_GPIOA_enable()
 }
 ```
 
-#### **e.g. Option 1 : Internal Clock (HSI) based GPIO**
+#### e.g. Option 1 : Internal Clock (HSI) based GPIO
 
 Step 1. Enable HSI and choose as SYSCLK source
 
@@ -411,6 +411,8 @@ void clear_pending_EXTI(uint32_t pin){
 
 ### Timer Interrupt (No output)
 
+------------
+
 * Timer interrupt type
   * Update interrupt : CNT has overflow or underflow
   * Compare c& Capture interrupt : CNT matches CCR
@@ -446,62 +448,103 @@ void clear_pending_EXTI(uint32_t pin){
 
 <img src="https://user-images.githubusercontent.com/99113269/196430153-69e76a94-faa5-41a0-bcfa-15ecece001d3.png" alt="image" style="zoom:50%;" />
 
------------------
-
 * example code of timer_interrupt ( Toggling 2 LEDs with timer interrupt )
 
-  ```c
-  #include "stm32f411xe.h"
-  #include "ecGPIO.h"
-  #include "ecRCC.h"
-  
-  uint32_t count = 0;
-  uint32_t count2 = 0;
-  
-  void setup(void);
-  	
-  int main(void) { 
-  	// Initialiization --------------------------------------------------------
-  	setup();
-  
-  	// Inifinite Loop ----------------------------------------------------------
-  	while(1){ }
-  }
-  
-  // Initialiization 
-  void setup(void)
-  {	
-  	RCC_PLL_init();                // System Clock = 84MHz
-  	//	GPIO LED pin configuration : user-defined function
-  	LED_init(GPIOB,LED_PB4,GPIOB,LED_PB5,GPIOB,LED_PB3,GPIOA,LED_PA10);
-  	TIM_INT_init(TIM2,1);
-  }
-  
-  void TIM2_IRQHandler(void){
-  	if((TIM2->SR & TIM_SR_UIF) == TIM_SR_UIF  ){ // update interrupt flag
-  	    count ++;
-  		count2 ++;
-  		
-  		if(count > 1000){
-  			bittoggle(GPIOB, LED_PB3);
-  			count = 0;
-  		}
-  		
-  		if(count2 > 2000){
-  			bittoggle(GPIOA, LED_PA10);
-  			count2 = 0;
-  		}
-  		
-  		// Check the flag in status register
-  		TIM2->SR &= ~TIM_SR_UIF;                  // clear by writing 0
-  	}
-  	
-  }
-  ```
+```c
+#include "stm32f411xe.h"
+#include "ecGPIO.h"
+#include "ecRCC.h"
 
-  
+uint32_t count = 0;
+uint32_t count2 = 0;
+
+void setup(void);
+	
+int main(void) { 
+	// Initialiization --------------------------------------------------------
+	setup();
+
+	// Inifinite Loop ----------------------------------------------------------
+	while(1){ }
+}
+
+// Initialiization 
+void setup(void)
+{	
+	RCC_PLL_init();                // System Clock = 84MHz
+	//	GPIO LED pin configuration : user-defined function
+	LED_init(GPIOB,LED_PB4,GPIOB,LED_PB5,GPIOB,LED_PB3,GPIOA,LED_PA10);
+	TIM_INT_init(TIM2,1);
+}
+
+void TIM2_IRQHandler(void){
+	if((TIM2->SR & TIM_SR_UIF) == TIM_SR_UIF  ){ // update interrupt flag
+	    count ++;
+		count2 ++;
+		
+		if(count > 1000){
+			bittoggle(GPIOB, LED_PB3);
+			count = 0;
+		}
+		
+		if(count2 > 2000){
+			bittoggle(GPIOA, LED_PA10);
+			count2 = 0;
+		}
+		
+		// Check the flag in status register
+		TIM2->SR &= ~TIM_SR_UIF;                  // clear by writing 0
+	}
+	
+}
+```
 
 
 
 
+
+## General purpose Timer : Input Capture
+
+* Find the time span between the consequent rising/falling edges of external signal
+* e.g. Ultrasonic pulse capture
+* How to calculate time span
+
+<img src="https://user-images.githubusercontent.com/99113269/199495393-474cdca9-88db-443e-b1a3-bd5e3d1953e6.png" alt="image" style="zoom:50%;" />
+
+
+
+* When an input capture occurs
+  * **CCR** stores cnt value
+  * Capture interrupt flag is set **CCIF = 1**
+  * Overflow interrupt flag is set **CCOF = 1**
+* User has to manually record OC value.
+* <u>Configuration of input capture</u>
+  * Select input signal
+    * Mapping TIMx CH1 - TI1 - CC1 - IC1
+    * Configure in **TIMx -> CCMR1**
+  * Configure the input filter
+    * Configure the filter duration
+    * Configure in **TIMx -> CCMR1**
+  * Configure the active edge
+  * Configure the Input Prescaler
+    * Configure in **TIMx -> CCMR1**
+  * Enable Input Capture
+    * Configure in **TIMx -> CCER**
+  * Enable Interrupt
+
+* Configuration code : CCMR , CCER
+
+* CCMR register
+  * 0 - 1 bit determines input capture / output mode
+  * Depending on the choice above, the register access becomes different.
+
+<img src="https://user-images.githubusercontent.com/99113269/199499721-450bb044-9dc9-4c52-a1b8-30fd000ef507.png" alt="image" style="zoom: 50%;" />
+
+* CCER register
+
+  <img src="https://user-images.githubusercontent.com/99113269/199500530-d256fffd-9e77-47e5-b388-b3e25d07e7e0.png" alt="image" style="zoom:50%;" />
+
+* DIER register
+
+  <img src="https://user-images.githubusercontent.com/99113269/199501142-b3f5c733-c135-45bd-815d-a9b32db37dd3.png" alt="image" style="zoom:50%;" />
 
