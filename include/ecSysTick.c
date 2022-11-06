@@ -16,7 +16,7 @@ volatile uint32_t msTicks;
 
 //EC_SYSTEM_CLK
 
-void SysTick_init(void){	
+void SysTick_init(uint32_t msec){	
 	//  SysTick Control and Status Register
 	SysTick->CTRL = 0;											// Disable SysTick IRQ and SysTick Counter
 
@@ -25,8 +25,7 @@ void SysTick_init(void){
 	SysTick->CTRL |= SysTick_CTRL_CLKSOURCE_Msk;
 
 	// uint32_t MCU_CLK=EC_SYSTEM_CLK
-	// SysTick Reload Value Register
-	SysTick->LOAD = 84000000 / 1000 - 1;						// 1ms, for HSI PLL = 84MHz.
+  SysTick->LOAD = (MCU_CLK_PLL / (1000)) * msec - 1;                  // 1ms, for HSI PLL = 84MHz.
 
 	// SysTick Current Value Register
 	SysTick->VAL = 0;

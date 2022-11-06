@@ -515,10 +515,17 @@ void TIM2_IRQHandler(void){
 
 * When an input capture occurs
   * **CCR** stores cnt value
+  
   * Capture interrupt flag is set **CCIF = 1**
+  
   * Overflow interrupt flag is set **CCOF = 1**
+  
+    <img src="https://user-images.githubusercontent.com/99113269/200170863-cc48f4d3-c49b-48cf-b3ea-886384165e34.png" alt="image" style="zoom: 50%;" />
+  
 * User has to manually record OC value.
+
 * <u>Configuration of input capture</u>
+  
   * Select input signal
     * Mapping TIMx CH1 - TI1 - CC1 - IC1
     * Configure in **TIMx -> CCMR1**
@@ -531,7 +538,7 @@ void TIM2_IRQHandler(void){
   * Enable Input Capture
     * Configure in **TIMx -> CCER**
   * Enable Interrupt
-
+  
 * Configuration code : CCMR , CCER
 
 * CCMR register

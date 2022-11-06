@@ -2,7 +2,7 @@
 @ Embedded Controller by Young-Keun Kim - Handong Global University
 Author           : HanMinung
 Created          : 05-03-2021
-Modified         : 10-29-2022
+Modified         : 11-02-2022
 Language/ver     : C++ in Keil uVision
 /----------------------------------------------------------------*/
 
@@ -30,7 +30,7 @@ Language/ver     : C++ in Keil uVision
 #define PUSH_PULL 0x00
 #define	OPEN_DRAIN 0x01
 
-#define	NO_PULL_UP 0x00
+#define	NO_PUPD 0x00
 #define	PULL_UP 0x01
 #define	PULL_DOWN 0x10
 #define	RESERVED 0x11

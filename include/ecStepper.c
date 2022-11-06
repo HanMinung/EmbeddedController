@@ -1,3 +1,11 @@
+/*----------------------------------------------------------------\
+@ Embedded Controller by Young-Keun Kim - Handong Global University
+Author           : HanMinung
+Created          : 05-03-2021
+Modified         : 11-02-2022
+Language/ver     : C++ in Keil uVision
+/----------------------------------------------------------------*/
+
 #include "stm32f4xx.h"
 #include "ecStepper.h"
 #include "ecGPIO.h"
@@ -12,10 +20,7 @@
 #define S6 6
 #define S7 7
 
-// Stepper Motor function
-uint32_t dir = 1; 
-uint32_t step_delay = 100; 
-uint32_t step_per_rev = 64*32;
+uint32_t step_delay = 0; 
 
 // Stepper Motor variable
 volatile Stepper_t myStepper; 

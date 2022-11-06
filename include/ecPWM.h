@@ -33,6 +33,7 @@ void PWM_period_us(PWM_t *pwm, uint32_t usec);
 
 
 void PWM_pulsewidth_ms(PWM_t *pwm, float pulse_width_ms);
+void PWM_pulsewidth_us(PWM_t *pwm, float pulse_width_us);
 void PWM_duty(PWM_t *pwm, float duty);
 void PWM_pinmap(PWM_t *PWM_pin);
 

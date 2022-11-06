@@ -20,7 +20,7 @@ counter resolution을 보고
 
 /* PWM Configuration */
 
-void PWM_init(PWM_t *pwm, GPIO_TypeDef *port, int pin,int ospeed, int otype, int pupd){
+void PWM_init(PWM_t *pwm, GPIO_TypeDef *port, int pin, int ospeed, int otype, int pupd){
 // 0. Match Output Port and Pin for TIMx 	
 		pwm->port = port;
 		pwm->pin  = pin;
@@ -131,6 +131,30 @@ void PWM_pulsewidth_ms(PWM_t *pwm, float pulse_width_ms){
 	
 	float fclk = fsys/(psc+1);														// fclk=fsys/(psc+1);
 	uint32_t ccval = (pulse_width_ms * fclk) - 1;					// pulse_width_ms *fclk - 1;
+	
+	//YOUR CODE GOES HERE
+	switch(CHn){
+		case 1: pwm->timer->CCR1 = ccval; break;
+		case 2: pwm->timer->CCR2 = ccval; break;
+		case 3: pwm->timer->CCR3 = ccval; break;
+		case 4: pwm->timer->CCR4 = ccval; break;
+		
+		default: break;
+	}
+}
+
+
+void PWM_pulsewidth_us(PWM_t *pwm, float pulse_width_us){ 
+	int CHn = pwm->ch;
+	uint32_t fsys = 0;
+	uint32_t psc = pwm->timer->PSC;
+	
+	// Check System CLK: PLL or HSI
+	if((RCC->CFGR & (3<<0)) == 2)      { fsys = 84; } 
+	else if((RCC->CFGR & (3<<0)) == 0) { fsys = 16; }
+	
+	float fclk = fsys/(psc+1);														// fclk=fsys/(psc+1);
+	uint32_t ccval = (pulse_width_us * fclk) - 1;					// pulse_width_ms *fclk - 1;
 	
 	//YOUR CODE GOES HERE
 	switch(CHn){

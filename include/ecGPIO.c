@@ -2,7 +2,7 @@
 @ Embedded Controller by Young-Keun Kim - Handong Global University
 Author           : HanMinung
 Created          : 05-03-2021
-Modified         : 10-29-2022
+Modified         : 11-02-2022
 Language/ver     : C++ in Keil uVision
 /----------------------------------------------------------------*/
 
@@ -37,36 +37,39 @@ void GPIO_init(GPIO_TypeDef *Port, int pin, int mode){
 	
 }
 
+// port, pin, type(input or output), output type(push pull or open drain) , pupd , output speed
 void indiv_init(GPIO_TypeDef *Port,int pin,int TYPE,int OTYPE,int PUPD,int OSPEED){
 
 	GPIO_init(Port, pin, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(Port, pin, PUSH_PULL);
-	GPIO_pupd(Port, pin,NO_PULL_UP);
+	GPIO_pupd(Port, pin,NO_PUPD);
 	GPIO_ospeed(Port, pin, MEDIUM_SPEED);
 	
 }
+
+
 
 // PB4 , PB5 , PB3 , PA10 sequencially
 void LED_init(GPIO_TypeDef *Port1, int pin1, GPIO_TypeDef *Port2, int pin2, GPIO_TypeDef *Port3, int pin3, GPIO_TypeDef *Port4, int pin4){
 
 	GPIO_init(Port1, pin1, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(Port1, pin1, PUSH_PULL);
-	GPIO_pupd(Port1, pin1,NO_PULL_UP);
+	GPIO_pupd(Port1, pin1,NO_PUPD);
 	GPIO_ospeed(Port1, pin1, MEDIUM_SPEED);
 	
 	GPIO_init(Port2, pin2, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(Port2, pin2, PUSH_PULL);
-	GPIO_pupd(Port2, pin2,NO_PULL_UP);
+	GPIO_pupd(Port2, pin2,NO_PUPD);
 	GPIO_ospeed(Port2, pin2, MEDIUM_SPEED);
 
 	GPIO_init(Port3, pin3, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(Port3, pin3, PUSH_PULL);
-	GPIO_pupd(Port3, pin3,NO_PULL_UP);
+	GPIO_pupd(Port3, pin3,NO_PUPD);
 	GPIO_ospeed(Port3, pin3, MEDIUM_SPEED);
 	
 	GPIO_init(Port4, pin4, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(Port4, pin4, PUSH_PULL);
-	GPIO_pupd(Port4, pin4,NO_PULL_UP);
+	GPIO_pupd(Port4, pin4,NO_PUPD);
 	GPIO_ospeed(Port4, pin4, MEDIUM_SPEED);
 
 }
@@ -160,43 +163,43 @@ void sevensegment_init(void){
 	// 시험때 LED_PB9으로 바뀜
 	GPIO_init(GPIOB, LED_PB9, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOB, LED_PB9, PUSH_PULL);
-	GPIO_pupd(GPIOB, LED_PB9,NO_PULL_UP);
+	GPIO_pupd(GPIOB, LED_PB9,NO_PUPD);
 	GPIO_ospeed(GPIOB, LED_PB9, MEDIUM_SPEED);
 	
 	GPIO_init(GPIOA, LED_PA6, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOA, LED_PA6, PUSH_PULL);
-	GPIO_pupd(GPIOA, LED_PA6,NO_PULL_UP);
+	GPIO_pupd(GPIOA, LED_PA6,NO_PUPD);
 	GPIO_ospeed(GPIOA, LED_PA6, MEDIUM_SPEED);
 
 	GPIO_init(GPIOA, LED_PA7, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOA, LED_PA7, PUSH_PULL);
-	GPIO_pupd(GPIOA, LED_PA7,NO_PULL_UP);
+	GPIO_pupd(GPIOA, LED_PA7,NO_PUPD);
 	GPIO_ospeed(GPIOA, LED_PA7, MEDIUM_SPEED);
 	
 	
 	GPIO_init(GPIOB, LED_PB6, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOB, LED_PB6, PUSH_PULL);
-	GPIO_pupd(GPIOB, LED_PB6,NO_PULL_UP);
+	GPIO_pupd(GPIOB, LED_PB6,NO_PUPD);
 	GPIO_ospeed(GPIOB, LED_PB6, MEDIUM_SPEED);
 
 	GPIO_init(GPIOC, LED_PC7, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOC, LED_PC7, PUSH_PULL);
-	GPIO_pupd(GPIOC, LED_PC7,NO_PULL_UP);
+	GPIO_pupd(GPIOC, LED_PC7,NO_PUPD);
 	GPIO_ospeed(GPIOC, LED_PC7, MEDIUM_SPEED);
 
 	GPIO_init(GPIOA, LED_PA9, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOA, LED_PA9, PUSH_PULL);
-	GPIO_pupd(GPIOA, LED_PA9,NO_PULL_UP);
+	GPIO_pupd(GPIOA, LED_PA9,NO_PUPD);
 	GPIO_ospeed(GPIOA, LED_PA9, MEDIUM_SPEED);
 	
 	GPIO_init(GPIOA, LED_PA8, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOA, LED_PA8, PUSH_PULL);
-	GPIO_pupd(GPIOA, LED_PA8,NO_PULL_UP);
+	GPIO_pupd(GPIOA, LED_PA8,NO_PUPD);
 	GPIO_ospeed(GPIOA, LED_PA8, MEDIUM_SPEED);
 	
 	GPIO_init(GPIOB, LED_PB10, OUTPUT);    // calls RCC_GPIOA_enable()	
 	GPIO_otype(GPIOB, LED_PB10, PUSH_PULL);
-	GPIO_pupd(GPIOB, LED_PB10,NO_PULL_UP);
+	GPIO_pupd(GPIOB, LED_PB10,NO_PUPD);
 	GPIO_ospeed(GPIOB, LED_PB10, MEDIUM_SPEED);
 
 	GPIO_write(GPIOA, LED_PA5, LOW);		// led a
