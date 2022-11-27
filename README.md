@@ -506,6 +506,7 @@ void TIM2_IRQHandler(void){
 ## General purpose Timer : Input Capture
 
 * Find the time span between the consequent rising/falling edges of external signal
+
 * e.g. Ultrasonic pulse capture
 * How to calculate time span
 
@@ -554,4 +555,68 @@ void TIM2_IRQHandler(void){
 * DIER register
 
   <img src="https://user-images.githubusercontent.com/99113269/199501142-b3f5c733-c135-45bd-815d-a9b32db37dd3.png" alt="image" style="zoom:50%;" />
+
+
+
+## USART
+
+* USART : Universal Synchronous / Asynchronous receiver and transmitter
+
+* **USARTx Configuration**
+
+  * STM32F411RE has 3x USART : USART2 // USART1 , USART6
+  * Has 5x SPI : SPI2 , SPI3 // SPI5 , SPI4 , SPI1
+
+* **Configuration LIST 1 : GPIO Pin setting**
+
+  * AF mode for Pin_y
+  * AF register for USARTx
+  * GPIO pin : no PUPD
+
+* USART setting 
+
+  * Enable USARTx peripheral clock
+  * Disable USARTx : for setting
+  * Configure parity mode, word length, oversampling mode
+  * set the stop bit
+  * Configure baud-rate
+  * Enable Transmitter, Receiver, and USARTx
+
+  <img src="https://user-images.githubusercontent.com/99113269/200877694-6f368372-11ff-4456-b28d-3c774fe442a2.png" alt="image" style="zoom: 50%;" />
+
+  1. List 1 : Enable USART2 peripheral clock 
+  
+     * RCC --> APB1ENR : USART2EN
+     * Defined macro in stm32 : RCC_APB1ENR_USAR2EN
+  
+  2. List 2 : Disabled USART2
+  
+     * USARTx --> CR1 &= ~USART_CR1_UE
+  
+  3. List 3 : Configure parity bit, word length, oversampling
+  
+     * USART2 --> CR1 &= ~USART_CR1_M
+     * USART2 --> CR1 &= ~USART_CR1_PCE
+     * USART2 --> CR1 &= ~USART_CR1_OVER8
+  
+  4. List 4 : Set the stop bit
+  
+     * USART2 --> CR2 : STOP
+     * 2 bit register
+     * USARTx --> CR2 &= ~USART_CR2_STOP : clear
+  
+  5. List 5 : Configure USARTDIV depending on the baud rate.
+  
+     * Register : USART_BRR
+  
+     <img src="https://user-images.githubusercontent.com/99113269/201042556-24243d15-d26f-40a6-a81e-e8251a5d59b9.png" alt="image" style="zoom: 50%;" />
+  
+     * e.g. Baud rate = 9600 [bps] for USART2 
+     * USARTDIV = 273.4375 = 273 + 0.4375 = 0x111 + 0x7
+  
+  6. List 6 : Enable Transmitter, Receiver, and USARTx
+  
+     * USARTx --> CR1 : TE , RE , UE
+     * USARTx --> CR1 |= ( USART_CR1_RE | USART_CR1_TE )
+     * USARTx --> CR1 |= (USART_CR1_UE)
 
