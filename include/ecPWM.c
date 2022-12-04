@@ -20,7 +20,7 @@ counter resolution을 보고
 
 /* PWM Configuration */
 
-void PWM_init(PWM_t *pwm, GPIO_TypeDef *port, int pin, int ospeed, int otype, int pupd){
+void PWM_init(PWM_t *pwm, GPIO_TypeDef *port, int pin){
 // 0. Match Output Port and Pin for TIMx 	
 		pwm->port = port;
 		pwm->pin  = pin;
@@ -30,10 +30,9 @@ void PWM_init(PWM_t *pwm, GPIO_TypeDef *port, int pin, int ospeed, int otype, in
 		int CHn = pwm->ch;	
 
 // 1. Initialize GPIO port and pin as AF
-		GPIO_init(port, pin, AF);   		 // AF=2
-		GPIO_ospeed(port, pin, ospeed);  // speed VHIGH=3
-		GPIO_otype(port,pin,otype);
-		GPIO_pupd(port,pin,pupd);
+		GPIO_init(port, pin, AF);   		 		 // AF=2
+		GPIO_ospeed(port, pin, FAST_SPEED);  // speed VHIGH=3
+		GPIO_pupd(port,pin,PUSH_PULL);
 	
 	
 // 2. Configure GPIO AFR by Pin num.				
@@ -233,7 +232,7 @@ void PWM_pinmap(PWM_t *pwm){
 
 int update_dir(int dir,uint8_t idx){
 
-		if(idx%19 == 0) dir *= -1;
+		if(idx%18 == 0) dir *= -1;
 	
 		return dir;
 }

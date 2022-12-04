@@ -27,7 +27,7 @@ typedef struct{
 
 
 /* PWM Configuration */
-void PWM_init(PWM_t *pwm, GPIO_TypeDef *port, int pin,int ospeed, int otype, int pupd);
+void PWM_init(PWM_t *pwm, GPIO_TypeDef *port, int pin);
 void PWM_period_ms(PWM_t *pwm,  uint32_t msec);		
 void PWM_period_us(PWM_t *pwm, uint32_t usec);  
 

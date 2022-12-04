@@ -19,6 +19,8 @@ extern "C" {
 	#include "ecStepper.h"
 	#include "ecUART.h"
 	#include "ecADC.h"
+	#include "FINAL_proj.h"
+	#include "math.h"
 
 	// The three lines below allow the 'C' language to be recognized in 'C++'.
 #ifdef __cplusplus

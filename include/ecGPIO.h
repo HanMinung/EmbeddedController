@@ -68,6 +68,12 @@ Language/ver     : C++ in Keil uVision
  extern "C" {
 #endif /* __cplusplus */
 
+typedef struct{
+   
+	GPIO_TypeDef *port;
+  int pin;
+	
+} _Pin;
 	 
 extern unsigned int state[10][8];
 

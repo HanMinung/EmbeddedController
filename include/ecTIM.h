@@ -30,6 +30,7 @@ typedef struct{
 
 
 /* Timer Configuration */
+
 void TIM_init(TIM_TypeDef *timerx, uint32_t msec);  
 void TIM_period_us(TIM_TypeDef* timx, uint32_t usec);  
 void TIM_period_ms(TIM_TypeDef* timx, uint32_t msec);

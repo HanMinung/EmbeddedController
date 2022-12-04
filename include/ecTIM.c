@@ -204,7 +204,7 @@ void ICAP_setup(IC_t *ICx, int ICn, int edge_type){
 	TIMx->DIER &= ~(1UL<<ICn);																		// CCn Interrupt Disable	
 	
 	
-// Configure  IC number(user selected) with given IC pin(TIMx_CHn)
+// Configure IC number(user selected) with given IC pin(TIMx_CHn)
 	switch(ICn){
 		
 			case 1:
