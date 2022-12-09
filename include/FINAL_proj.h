@@ -38,7 +38,13 @@ uint8_t Pre_process(float dist);
 
 uint16_t Stirrer_state(uint8_t _flag, uint8_t _preflag);
 
+float STIR_OPC_control(uint8_t _flag);
 
+void TEMP_det(float temp_out);
+
+uint8_t BUTTON_stir_det(uint32_t _currCNT,uint32_t _prevCNT, uint8_t _flag);
+
+void LED_estop(void);
 
 
 

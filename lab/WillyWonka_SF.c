@@ -10,8 +10,10 @@ Description 		 : Final project in Embedded Controller
 #include "ecHAL.h"
 #include "FINAL_variable.h"
 
+
 // VARIABLES : RC SERVO MOTOR --------------
 PWM_t pwm;
+PWM_t opc;
 
 // FUNCTION DECLARATION --------------------
 void SERVO_setup();
@@ -29,28 +31,59 @@ int main(void){
 	// infinite loop -------------------------
 	while(1){
 		
+		if(ESTOP_flag == 0){
+			
+			delay_ms(500);
+			
+			// LED state update in stirrer
+			Stirrer_LED_state(LED_stir_state);
+			
+			// Algorithm to complement error values 
+			Stir_dist_flag = Pre_process(distance);		
+			
+			//LED state determination
+			LED_stir_state = Stirrer_state(Stir_dist_flag, Stir_pre_flag);	
+	
+  		//printf("STIR_DIST_FLAG : %d\r\n",Stir_dist_flag);
+			
+			Stir_pre_flag = LED_stir_state;
+			
+			// FOR OPENING AND CLOSING : debouncing 문제가 심해서 넣은 알고리즘
+			OPC_flag = BUTTON_stir_det(BUTTON_cnt,BUTTON_prev, OPC_flag);
+			
+			BUTTON_prev = BUTTON_cnt;
+			
+			servo_opc_int = STIR_OPC_control(OPC_flag);
+			
+			PWM_duty(&opc,servo_opc_int);
+		  
+			// TEMPERATURE SENSOR			
+			TEMP_det(TEMP_out);
+			
+			
+			
+		}
 		
-		// LED state update in stirrer
-		Stirrer_LED_state(LED_stir_state);
+		else if(ESTOP_flag){
+			
+			TIM_INT_disable(TIM5);
+			
+			LED_estop();
+
+			delay_ms(500);
+			
+		}
+
+//    FOR DEBUGGING --------------------------------------------------------
+//		printf("Distance : %f \r\n",distance);
+//		printf("OPC flag : %d \r\n",OPC_flag);
+//		printf("STIR_PRE_FLAG : %d \r\n\n\n",Stir_pre_flag);
+//		printf("EMERGENCY_flag FLAG: %d",EMERGENCY_flag);
 		
-		// Algorithm to complement error values 
-		Stir_dist_flag = Pre_process(distance);
-		
-		// FOR DEBUGGING -------------------------------------
-//		printf("distance flag : %d\r\n\n\n",Stir_dist_flag);
-//		printf("distance : %f\r\n",distance);		
-		
-		//LED state determination
-		LED_stir_state = Stirrer_state(Stir_dist_flag, Stir_pre_flag);
-		
-		sevensegment_decoder(LED_stir_state);
-		// FOR preventing error : Stir_pre_flag ( 0 OR 1 )
-		Stir_pre_flag = LED_stir_state;
+
 
 		
-		// TIMER interrupt for servo motor : 0.5 sec
 		
-		delay_ms(500);
 		
 	}
 	
@@ -63,15 +96,13 @@ int main(void){
 
 
 //--------------------------------------------------------------------------------
-
-
-
-/*  -------------------------------------------------
-|		- SERVO MOTOR TIMER INTERRUPT : TIM5						|	
-|		- SERVO MOTOR PWM : TIMER 4 CHANNEL 1						|
-|		- ULTRASONIC PWM : TIM3 CHANNEL 1					 			|
-|		- ULTRASONIC TIMER INTERRUPT  : TIM2 CHANNEL 3	|
-|---------------------------------------------------*/
+/*  --------------------------------------------------
+|		- SERVO MOTOR_1 TIMER INTERRUPT : TIM5						|	
+|		- SERVO MOTOR_1 PWM : TIMER 4 CHANNEL 1						|
+|		- SERVO MOTOR_2 PWM : TIMER 1 CHANNEL 1						|
+|		- ULTRASONIC PWM : TIM3 CHANNEL 1					 		  	|
+|		- ULTRASONIC TIMER INTERRUPT  : TIM2 CHANNEL 3  	|
+|----------------------------------------------------*/
 
 
 void TIM5_IRQHandler(void){
@@ -82,8 +113,8 @@ void TIM5_IRQHandler(void){
 		else if(servo_dir == -1) servo_idx --;
 		
 		servo_dir = update_dir(servo_dir,servo_idx);
-	  servo_duty = update_duty(servo_idx);
-		PWM_duty(&pwm,servo_duty);
+	  servo_stir_duty = update_duty(servo_idx);
+		PWM_duty(&pwm,servo_stir_duty);
 	}
 
 	TIM5->SR &= ~TIM_SR_UIF;                  		
@@ -96,7 +127,11 @@ void SERVO_setup(){
 	
 	PWM_init(&pwm,GPIOB,6);
 	PWM_period_ms(&pwm,20);
-	PWM_duty(&pwm,servo_duty);
+	PWM_duty(&pwm,servo_stir_duty);
+	
+	PWM_init(&opc,GPIOA,8);
+	PWM_period_ms(&opc,20);
+	PWM_duty(&opc,servo_opc_duty);
 }
 
 
@@ -148,39 +183,39 @@ void ULTRASONIC_setup(){
 }
 
 
-// BLUETOOTH COMMUNICATION
-void USART1_IRQHandler(){  
+void EXTI15_10_IRQHandler(void) { 
 	
-	if(is_USART_RXNE(USART1)){
+	if (is_pending_EXTI(BUTTON_PIN)) {
 		
-		mcuData = USART_getc(USART1);
+		BUTTON_cnt ++;
 		
-//		USART_write(USART1,(uint8_t*) "BT sent : ", 10);
-//		USART_write(USART1, &mcuData, 1);
-//		USART_write(USART1, "\r\n", 2);
-//		printf("NUCLEO got : %c (from BT)\r\n",mcuData);
-		
-		switch(mcuData){
-			
-			// STOP FLAG
-			case 's' :  ALLSTOP_flag = 1;		break;
-			// ACTIVATION FLAG
-			case 'r' :  ALLSTOP_flag = 0;		break;
-			
-		}
-		
+		clear_pending_EXTI(BUTTON_PIN); // cleared by writing '1'
+	}
+	
+}
+
+// TEMPERRATUR SENSOR
+void ADC_IRQHandler(void){
+   if((is_ADC_OVR())){
+      clear_ADC_OVR();
+   }
+   
+   if( is_ADC_EOC() ){       	
+     TEMP_out = ADC_read();
+      
+      
 	}
 }
 
 
-// PC <---> MCU 통신
+// PC <---> MCU communication
 void USART2_IRQHandler(){     
 	
 	if(is_USART_RXNE(USART2)){
 		
 		pcData = USART_getc(USART2);
 		USART_write(USART1, &pcData, 1);
-//		printf("Nucleo got : %c \r\rn", pcData);
+		printf("Nucleo got : %c \r\rn", pcData);
 		
 		printf("%c", pcData);
 		
@@ -189,3 +224,30 @@ void USART2_IRQHandler(){
 		
 	}
 }
+
+
+// bluetooth 통신
+void USART6_IRQHandler(){         //USART6 INT 
+	
+	if(is_USART_RXNE(USART6)){
+		
+		mcuData = USART_getc(USART6);
+		
+//		USART_write(USART1,(uint8_t*) "BT sent : ", 10);
+//		USART_write(USART1, &mcuData, 1);
+//		USART_write(USART1, "\r\n", 2);
+//		printf("NUCLEO got : %c (from BT)\r\n",mcuData);
+		
+		switch(mcuData){
+			
+			case 's' : ESTOP_flag = 1;													break;
+			
+			case 'r' : ESTOP_flag = 0;	TIM_INT_enable(TIM5);		break;
+			
+			default : break;
+ 
+		}
+		
+	}
+}
+

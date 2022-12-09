@@ -38,14 +38,22 @@ void FINAL_setup(void){
 	LED_stir_setup();
 	LED_dist_setup();
 	
-	// SEVENSEGMENT INIT -------------------------------------------
-	sevensegment_init();
-	
 	// Temperature sensor setup ------------------------------------
 	
-	// BLUETOOTH communication setup : PA9 (TX) , PA10 (RX)
-	USART_begin(USART1, GPIOA, 9, GPIOA, 10, 9600); 
+	// BLUETOOTH communication setup : PA11 (TX) , PA12 (RX)
+	UART2_init();
+	USART_init(USART2, 9600);                          		// PC <--> mcu.
+	USART_begin(USART6, GPIOA, 11, GPIOA, 12, 9600);    	// Bluetooth : PA11 (TX) PA12 (RX)
 
+	// EXTI init
+	EXTI_init(GPIOC,BUTTON_PIN,FALL,1);		
+	GPIO_init(GPIOC, BUTTON_PIN, INPUT);			
+	GPIO_pupd(GPIOC, BUTTON_PIN, EC_PU);			
+	
+	// ADC init : FOR TEMPERATURE SENSOR
+	ADC_init(GPIOB, 1, SW);
+  ADC_continue(CONT);
+	ADC_start();
 	
 }
 
@@ -54,10 +62,12 @@ void FINAL_setup(void){
 void LED_stir_setup(){
 	// STIRRER - STATE LED
 	// PA8 , PB10 , PB4
-	indiv_init(GPIOB,0,OUTPUT,PUSH_PULL,PULL_UP,MEDIUM_SPEED);
-	indiv_init(GPIOC,1,OUTPUT,PUSH_PULL,PULL_UP,MEDIUM_SPEED);
-	indiv_init(GPIOC,0,OUTPUT,PUSH_PULL,PULL_UP,MEDIUM_SPEED);
+	indiv_init(GPIOB,0,OUTPUT,PUSH_PULL,NO_PUPD,MEDIUM_SPEED);
+	indiv_init(GPIOC,1,OUTPUT,PUSH_PULL,NO_PUPD,MEDIUM_SPEED);
+	indiv_init(GPIOC,0,OUTPUT,PUSH_PULL,NO_PUPD,MEDIUM_SPEED);
 
+	// TEMPERATURE
+	indiv_init(GPIOC,10,OUTPUT,PUSH_PULL,NO_PUPD,MEDIUM_SPEED);
 }
 
 
@@ -86,7 +96,7 @@ uint8_t Pre_process(float dist){
 	uint8_t _flag = 0;
 	
 	if(dist > 12.0 && dist < 17.0)		_flag = 0;		// PROPER value : closed
-	else if (dist > 20 && dist < 40) 	_flag = 1;		// OPEN state
+	else if (dist >= 17 && dist < 60) 	_flag = 1;		// OPEN state
 	else if(dist < 2 || dist > 400)		_flag = 2;		// ERROR value : exception
 	
 	return _flag;
@@ -116,5 +126,39 @@ uint16_t Stirrer_state(uint8_t _flag, uint8_t _preflag){
 }
 
 
+float STIR_OPC_control(uint8_t _flag){
 
+	if(_flag == 1)				return 0.088;
+			
+	else if(_flag == 0) 	return 0.00;
+
+}
+
+
+void TEMP_det(float temp_out){
+	
+	float TEMP_act = 0.0;
+	
+	TEMP_act = (float)temp_out/10 + 50;
+	
+	if(TEMP_act > 80)	GPIO_write(GPIOC,10,HIGH);
+	else GPIO_write(GPIOC,10,LOW);
+	
+	printf("Actual temp : %f\r\n",TEMP_act);
+
+}
+
+uint8_t	BUTTON_stir_det(uint32_t _currCNT, uint32_t _prevCNT, uint8_t _flag){
+	
+	if(_currCNT - _prevCNT >= 1 ) _flag ^= 1;
+	
+	return _flag;
+}
+
+void LED_estop(void){
+
+	GPIO_write(GPIOB, 0, LOW);
+	GPIO_write(GPIOC, 1, LOW);
+	bittoggle(GPIOC,0);
+}
 
