@@ -81,10 +81,6 @@ int main(void){
 //		printf("EMERGENCY_flag FLAG: %d",EMERGENCY_flag);
 		
 
-
-		
-		
-		
 	}
 	
 }
@@ -103,7 +99,6 @@ int main(void){
 |		- ULTRASONIC PWM : TIM3 CHANNEL 1					 		  	|
 |		- ULTRASONIC TIMER INTERRUPT  : TIM2 CHANNEL 3  	|
 |----------------------------------------------------*/
-
 
 void TIM5_IRQHandler(void){
 	
@@ -250,4 +245,5 @@ void USART6_IRQHandler(){         //USART6 INT
 		
 	}
 }
+ 
 
